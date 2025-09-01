@@ -1,4 +1,7 @@
 # Скрипты для AutoHotKey v2
+Скачать и установить [AutoHotKey v2](https://www.autohotkey.com/)
+Для запуска скрипта при старте системы поместить ссылку на скрипт в папку автозагрузки
+Папку автозагрузки можно найти вбив в выполнить(win+r) shell:startup
 
 - desktop-manager.ahk - горячие клавиши для моментального переключения рабочих столов windows по сочетаниям ctrl+alt+1, 2, 3 и т.д
   
@@ -16,7 +19,7 @@
   
   - ctrp+alt+p - play/pause
     
-    caps2esc.ahk - rebind capslock to escape
+ -caps2esc.ahk - rebind capslock to escape
     
     
 
