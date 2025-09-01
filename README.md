@@ -19,7 +19,7 @@
   
   - ctrp+alt+p - play/pause
     
- -caps2esc.ahk - rebind capslock to escape
+ - caps2esc.ahk - rebind capslock to escape
     
     
 
