@@ -36,8 +36,11 @@ GetDesktopCount() {
 
 MoveCurrentWindowToDesktop(number) {
     global MoveWindowToDesktopNumberProc, GoToDesktopNumberProc
-    activeHwnd := WinGetID("A")
-    DllCall(MoveWindowToDesktopNumberProc, "Ptr", activeHwnd, "Int", number, "Int")
+    ; WinExist возвращает 0, если активного окна нет (WinGetID бросает ошибку)
+    activeHwnd := WinExist("A")
+    if (activeHwnd) {
+        DllCall(MoveWindowToDesktopNumberProc, "Ptr", activeHwnd, "Int", number, "Int")
+    }
     DllCall(GoToDesktopNumberProc, "Int", number, "Int")
 }
 
@@ -76,7 +79,8 @@ MoveOrGotoDesktopNumber(num) {
     global MoveWindowToDesktopNumberProc, GoToDesktopNumberProc, IsWindowOnDesktopNumberProc
 	Sleep 100
     ; Сохраняем текущее активное окно
-    hwnd := WinGetID("A")
+    ; Активного окна может не быть (пустой стол, анимация переключения)
+    hwnd := WinExist("A")
 
     if (GetKeyState("LButton")) {
         MoveCurrentWindowToDesktop(num)
@@ -85,10 +89,13 @@ MoveOrGotoDesktopNumber(num) {
         Sleep 100
 
         ; Проверяем, находится ли окно на новом рабочем столе
-        isOnTarget := DllCall(IsWindowOnDesktopNumberProc, "Ptr", hwnd, "Int", num, "Int")
+        if (hwnd && WinExist("ahk_id " hwnd)) {
+            isOnTarget := DllCall(IsWindowOnDesktopNumberProc, "Ptr", hwnd, "Int", num, "Int")
 
-        if (isOnTarget) {
-            WinActivate("ahk_id " hwnd)
+            ; DLL возвращает -1 при ошибке, поэтому сравниваем строго с 1
+            if (isOnTarget = 1) {
+                try WinActivate("ahk_id " hwnd)
+            }
         }
     }
     return
@@ -120,7 +127,10 @@ RemoveDesktop(remove_desktop_number, fallback_desktop_number) {
 }
 
 TogglePinActiveWindow() {
-    hwnd := WinGetID("A")
+    hwnd := WinExist("A")
+    if (!hwnd) {
+        return
+    }
     isPinned := DllCall(fn_IsPinnedWindow, "Ptr", hwnd, "Int")
 
     if isPinned {
